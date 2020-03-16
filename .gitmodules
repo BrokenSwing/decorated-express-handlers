@@ -1,0 +1,3 @@
+[submodule "simple"]
+	path = simple
+	url = ./examples/simple

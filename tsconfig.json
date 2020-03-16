@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES5",
+    "declaration": true,
+    "outDir": "./dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "incremental": true,
+    "alwaysStrict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "allowUnreachableCode": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
