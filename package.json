@@ -1,7 +1,7 @@
 {
-  "name": "annotated-express-handlers",
+  "name": "decorated-express-handlers",
   "version": "1.0.0",
-  "description": "",
+  "description": "Decorators for express handlers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -11,8 +11,16 @@
     "lint": "eslint src/*.ts"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Florent HUGOUVIEUX",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrokenSwing/decorated-express-handlers.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BrokenSwing/decorated-express-handlers/issues"
+  },
+  "homepage": "https://github.com/BrokenSwing/decorated-express-handlers",
+  "license": "Apache 2.0",
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
