@@ -1,4 +1,4 @@
 # WebStorm
 .idea
 node_modules
-dist/tsconfig.tsbuildinfo
+dist/
