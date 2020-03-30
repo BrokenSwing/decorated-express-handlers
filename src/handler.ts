@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import {logger} from './logger';
 import {convertToInteger, convertToString} from './conversion/convert';
 import {ParameterInfo, PARAM_INFO_METADATA} from './metadata/parameter-info';
-import {Extractor, extractFromBody, extractFromRoute} from './extraction';
+import {Extractor, extractFromBody, extractFromRoute, extractFromHeader} from './extraction';
 import {guard, pipe, UnaryFunction} from './utils/pipe';
 
 export function Handler(): Function {
@@ -55,6 +55,9 @@ export function Handler(): Function {
                 break;
             case 'body':
                 extractor = extractFromBody(decorated.name);
+                break;
+            case 'header':
+                extractor = extractFromHeader(decorated.name);
                 break;
             }
 

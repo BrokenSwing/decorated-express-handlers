@@ -1,4 +1,4 @@
-import {extractFromBody, extractFromRoute} from './index';
+import {extractFromBody, extractFromHeader, extractFromRoute} from './index';
 import {Request} from 'express';
 
 import * as chai from 'chai';
@@ -46,5 +46,21 @@ describe('Data extraction from request', () => {
 
     });
 
+    describe('Header extractor', () => {
+
+        const reqMock = mock<Request>();
+        when(reqMock.header('Authorization')).thenReturn('Bearer a-JWT');
+
+        it('should extract value from headers', () => {
+            const req = instance(reqMock);
+
+            const authorization = extractFromHeader('Authorization')(req);
+            expect(authorization).to.eq('Bearer a-JWT');
+
+            const other = extractFromHeader('other')(req);
+            expect(other).to.be.undefined;
+        });
+
+    });
 
 });
