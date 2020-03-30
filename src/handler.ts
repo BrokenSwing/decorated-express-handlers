@@ -1,9 +1,10 @@
 import {Request, Response, NextFunction} from 'express';
 import 'reflect-metadata';
 import {logger} from './logger';
-import {convertToInteger} from './conversion/convert';
+import {convertToInteger, convertToString} from './conversion/convert';
 import {ParameterInfo, PARAM_INFO_METADATA} from './metadata/parameter-info';
 import {Extractor, extractFromBody, extractFromRoute} from './extraction';
+import {guard, pipe, UnaryFunction} from './utils/pipe';
 
 export function Handler(): Function {
     return function (
@@ -35,37 +36,33 @@ export function Handler(): Function {
             logger.debug(`Preparing extractor for '${decorated.name}' parameter of type ${typeName}` +
                 ` for handler '${propertyKey}'`);
 
-            let converter: Function;
+            let converter: UnaryFunction<string, unknown>;
 
             if (typeName === 'Number') {
                 converter = convertToInteger;
+            } else if(typeName === 'String') {
+                converter = convertToString;
             } else {
                 logger.error(`Unknown type : ${typeName}`);
                 process.exit(1);
             }
 
+            let extractor: UnaryFunction<Request, string | undefined>;
+
             switch (decorated.source) {
             case 'route':
-                extractors[decorated.index] = <T>(req: Request): T | undefined => {
-                    const value: string | undefined = extractFromRoute(decorated.name)(req);
-                    if (value === undefined) {
-                        return undefined;
-                    } else {
-                        return converter(value) as T;
-                    }
-                };
+                extractor = extractFromRoute(decorated.name);
                 break;
             case 'body':
-                extractors[decorated.index] = <T>(req: Request): T | undefined => {
-                    const value: string | undefined = extractFromBody(decorated.name)(req);
-                    if (value === undefined) {
-                        return undefined;
-                    } else {
-                        return converter(value) as T;
-                    }
-                };
+                extractor = extractFromBody(decorated.name);
                 break;
             }
+
+            extractors[decorated.index] = pipe(
+                extractor,
+                guard((s: string) => s !== undefined),
+                converter
+            );
 
         }
 

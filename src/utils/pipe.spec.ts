@@ -1,4 +1,4 @@
-import {pipe} from "./pipe";
+import {guard, pipe} from './pipe';
 import * as chai from 'chai';
 
 const expect = chai.expect;
@@ -24,6 +24,23 @@ describe('Utilities functions', () => {
             );
             expect(stringToIntThenAdd2('12')).to.be.eq(14);
             expect(stringToIntThenAdd2('a')).to.be.undefined;
+        });
+
+        it('should return undefined on invalided guard', () => {
+            const trimThenLongerThan3 = pipe(
+                (s: string) => s.trim(),
+                guard((s: string) => s.length > 3)
+            );
+            expect(trimThenLongerThan3('  foo  ')).to.be.undefined;
+        });
+
+        it('should pass through valid guard', () => {
+            const trimThenStartsWithNumberThenLowerCase = pipe(
+                (s: string) => s.trim(),
+                guard((s: string) => /^[0-9]/.test(s)),
+                (s: string) => s.toLowerCase()
+            );
+            expect(trimThenStartsWithNumberThenLowerCase('  52 KM')).to.be.eq('52 km');
         });
 
     });
