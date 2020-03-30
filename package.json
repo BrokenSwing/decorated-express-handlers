@@ -8,7 +8,7 @@
     "test": "mocha --reporter spec --require ts-node/register src/**/*.spec.ts",
     "build": "tsc",
     "lint-fix": "eslint --fix src/**/*.ts",
-    "lint": "eslint src/*.ts"
+    "lint": "eslint src/**/*.ts"
   },
   "keywords": [],
   "author": "Florent HUGOUVIEUX",
