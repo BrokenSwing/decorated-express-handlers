@@ -1,4 +1,4 @@
-import {convertToInteger, convertToString} from './convert';
+import {convertToBoolean, convertToInteger, convertToString} from './convert';
 
 import * as chai from 'chai';
 
@@ -29,6 +29,26 @@ describe('Conversion functions', () => {
             expect(convertToString('    Left trimming')).to.eq('Left trimming');
             expect(convertToString('Right trimming     ')).to.eq('Right trimming');
             expect(convertToString('    Left-Right trimming     ')).to.eq('Left-Right trimming');
+        });
+
+    });
+
+    describe('String -> Boolean conversion', () => {
+
+        it('should convert valid values to boolean', () => {
+            expect(convertToBoolean('on')).to.be.true;
+            expect(convertToBoolean('1')).to.be.true;
+            expect(convertToBoolean('true')).to.be.true;
+
+            expect(convertToBoolean('off')).to.be.false;
+            expect(convertToBoolean('0')).to.be.false;
+            expect(convertToBoolean('false')).to.be.false;
+        });
+
+        it('should convert invalid values to undefined', () => {
+            expect(convertToBoolean('other')).to.be.undefined;
+            expect(convertToBoolean('2')).to.be.undefined;
+            expect(convertToBoolean('')).to.be.undefined;
         });
 
     });

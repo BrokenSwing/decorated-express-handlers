@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from 'express';
 import 'reflect-metadata';
 import {logger} from './logger';
-import {convertToInteger, convertToString} from './conversion/convert';
+import {convertToBoolean, convertToInteger, convertToString} from './conversion/convert';
 import {ParameterInfo, PARAM_INFO_METADATA} from './metadata/parameter-info';
 import {Extractor, extractFromBody, extractFromRoute, extractFromHeader} from './extraction';
 import {guard, pipe, UnaryFunction} from './utils/pipe';
@@ -40,8 +40,10 @@ export function Handler(): Function {
 
             if (typeName === 'Number') {
                 converter = convertToInteger;
-            } else if(typeName === 'String') {
+            } else if (typeName === 'String') {
                 converter = convertToString;
+            } else if (typeName === 'Boolean') {
+                converter = convertToBoolean;
             } else {
                 logger.error(`Unknown type : ${typeName}`);
                 process.exit(1);
