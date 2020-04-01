@@ -1,17 +1,23 @@
-import {Handler} from './handler';
 import * as Express from 'express';
-import {RouteParam} from './decorators';
+import {Get, RouteParam, Controller} from './decorators';
 
+@Controller()
 class A {
 
-    @Handler()
-    a(@RouteParam('id') a: number): string {
-        return `Id is ${a}`;
+    public router!: Express.Router;
+
+    constructor(
+        private s: string
+    ) {}
+
+    @Get('/:id')
+    a(@RouteParam('id') id: number): string {
+        return `Id is ${id} and s is ${this.s}`;
     }
 
 }
 
-const a = new A();
+const a = new A('');
 const app = Express();
-app.get('/:id', a.a);
+app.use('/', a.router);
 app.listen(8000, () => console.log('Listening ...'));
