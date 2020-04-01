@@ -2,8 +2,8 @@
   "name": "decorated-express-handlers",
   "version": "1.0.0",
   "description": "Decorators for express handlers",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/lib.js",
+  "types": "dist/lib.d.ts",
   "scripts": {
     "test": "mocha --reporter spec --require ts-node/register src/**/*.spec.ts",
     "build": "tsc",

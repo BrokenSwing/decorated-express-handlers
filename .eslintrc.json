@@ -45,6 +45,7 @@
         "capitalized-comments": "error",
         "array-bracket-newline": "error",
         "comma-spacing": "error",
-        "eol-last": "error"
+        "eol-last": "error",
+        "@typescript-eslint/no-explicit-any": "off"
     }
 }
