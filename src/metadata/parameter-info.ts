@@ -5,3 +5,7 @@ export interface ParameterInfo {
     source: 'query' | 'route' | 'header';
     index: number;
 }
+
+export function getParameterInfoOf(target: Record<string, any>, property: string | symbol): ParameterInfo[] {
+    return Reflect.getOwnMetadata(PARAM_INFO_METADATA, target, property) || [];
+}

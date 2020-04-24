@@ -46,6 +46,7 @@
         "array-bracket-newline": "error",
         "comma-spacing": "error",
         "eol-last": "error",
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-use-before-define": "off"
     }
 }

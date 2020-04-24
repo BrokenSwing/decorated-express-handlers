@@ -1,76 +1,105 @@
 import 'reflect-metadata';
-import {HandlerInfo, PROPERTY_INFO_METADATA} from '../../metadata/handler-info';
-import {NextFunction, Router, Request, Response} from 'express';
+import {getHandlerInfoOf, HttpVerb, isHandler} from '../../metadata/handler-info';
+import {NextFunction, Request, Response, Router} from 'express';
 import {logger} from '../../logger';
 import {createParamsExtractionMethod} from '../../extraction';
-import {PARAM_INFO_METADATA, ParameterInfo} from '../../metadata/parameter-info';
+import {getParameterInfoOf} from '../../metadata/parameter-info';
+import {getParametersTypesOf} from '../../metadata';
 
+/**
+ * Defines the decorated class as a controller. Every methods decorated with one of handlers
+ * decorators (@Get, @Post, @Put, etc ...) in the controller will be treated as route handlers.
+ *
+ * Example:
+ * <pre>
+ *  @Controller()
+ *  public class UserController {
+ *
+ *      @Get('/')
+ *      getAllUser() {
+ *          return ['Foo', 'Bar', 'Foobar'];
+ *      }
+ *
+ *  }
+ * </pre>
+ */
 export function Controller(): Function {
     return function<T extends {new(...args: any[]): {}}>(constructor: T): T {
-        // Const result = Reflect.getOwnMetadata('design:paramtypes', constructor);
-        // Console.log(constructor.name);
-        // Console.log(result.map((t: any) => t.name));
+        // In futur, used parameters types to find dependencies
+        /*
+            Const result = Reflect.getOwnMetadata('design:paramtypes', constructor);
+            console.log(constructor.name);
+            console.log(result.map((t: any) => t.name));
+         */
 
+        /* Create router to attach handlers on */
         const router = Router();
-        const NewType = class extends constructor {
+
+        /* Create a wrapper for given type. In futur it will be populated with injected dependencies */
+        const WrapperType = class extends constructor {
             router: Router = router;
             s = 'My string'
         };
-        const instance = new NewType();
 
-        for (const propertyKey of Object.keys(constructor.prototype)) {
-            const handlersInfo: HandlerInfo[] = Reflect.getOwnMetadata(PROPERTY_INFO_METADATA, constructor.prototype, propertyKey);
-            if (handlersInfo && handlersInfo.length > 0) {
-                const descriptor = Reflect.getOwnPropertyDescriptor(constructor.prototype, propertyKey);
-                if (descriptor !== undefined) {
+        /* Create an instance of wrapped type to make calls on */
+        const instance = new WrapperType();
 
-                    const typesNames: string[] = Reflect
-                        .getMetadata('design:paramtypes', constructor.prototype, propertyKey)
-                        .map((t: Record<string, unknown>) => t.name);
-                    const parametersInfo: ParameterInfo[] = Reflect.getOwnMetadata(PARAM_INFO_METADATA, constructor.prototype, propertyKey) || [];
+        /* Search for route handlers in the given type then attach them to previously created router */
+        Object.keys(constructor.prototype)
+            .filter((property) => isHandler(constructor.prototype, property))
+            .forEach((property) => {
 
-                    const parametersExtractor = createParamsExtractionMethod(typesNames, parametersInfo);
-                    const toCall = function(req: Request, res: Response, next: NextFunction): void {
-                        const paramsValues: unknown[] | undefined = parametersExtractor(req);
-                        if (paramsValues === undefined) {
-                            next();
-                        } else {
-                            res.send(
-                                (constructor.prototype[propertyKey] as Function).apply(instance, paramsValues)
-                            );
-                        }
-                    };
+                /* Gather method data : handler decorators, method types and decorated parameters */
+                const handlersInfo   = getHandlerInfoOf(constructor.prototype, property);
+                const typesNames     = getParametersTypesOf(constructor.prototype, property);
+                const parametersInfo = getParameterInfoOf(constructor.prototype, property);
 
-                    for (const handlerInfo of handlersInfo) {
-                        let routingMethod: Function | undefined;
-                        switch (handlerInfo.method) {
-                        case 'get':
-                            routingMethod = router.get;
-                            break;
-                        case 'post':
-                            routingMethod = router.post;
-                            break;
-                        case 'delete':
-                            routingMethod = router.delete;
-                            break;
-                        case 'put':
-                            routingMethod = router.put;
-                            break;
-                        case 'patch':
-                            routingMethod = router.patch;
-                            break;
-                        default:
-                            routingMethod = undefined;
-                        }
-                        logger.debug(`Registering handler '${propertyKey}' on route '${handlerInfo.route}'` +
-                        ` with method '${handlerInfo.method}'`);
-                        routingMethod?.call(router, handlerInfo.route, (req: Request, res: Response, next: NextFunction) =>
-                            toCall(req, res, next));
+                /* Create the method to extract all parameters from the request object */
+                const parametersExtractor = createParamsExtractionMethod(typesNames, parametersInfo);
+                const handleFunction = function(req: Request, res: Response, next: NextFunction): void {
+                    const paramsValues: unknown[] | undefined = parametersExtractor(req);
+                    if (paramsValues === undefined) {
+                        next();
+                    } else {
+                        // TODO: Handle multiple return types
+                        res.send(
+                            (constructor.prototype[property] as Function).apply(instance, paramsValues)
+                        );
                     }
-                }
-            }
-        }
+                };
 
-        return NewType;
+                handlersInfo.forEach((handler) => {
+                    const routingMethod = getRouterMethodByHttpVerb(router, handler.method);
+
+                    logger.debug(`Registering handler '${property}' on route '${handler.route}'` +
+                        ` with method '${handler.method}'`);
+                    routingMethod.call(router, handler.route, (req: Request, res: Response, next: NextFunction) =>
+                        handleFunction(req, res, next));
+                });
+            });
+
+        return WrapperType;
     };
+}
+
+/**
+ * Returns the appropriate method of the given router to register a route handler
+ * that handle the give http verb.
+ *
+ * @param router The router to get method of
+ * @param verb The verb matching http method to handle
+ */
+function getRouterMethodByHttpVerb(router: Router, verb: HttpVerb): Function {
+    switch (verb) {
+    case 'get':
+        return router.get;
+    case 'post':
+        return router.post;
+    case 'delete':
+        return router.delete;
+    case 'put':
+        return router.put;
+    case 'patch':
+        return router.patch;
+    }
 }
