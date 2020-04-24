@@ -45,7 +45,7 @@ export function createParamsExtractionMethod(parametersTypes: string[], paramete
         case 'route':
             extractor = extractFromRoute(decorated.name);
             break;
-        case 'body':
+        case 'query':
             extractor = extractFromBody(decorated.name);
             break;
         case 'header':
