@@ -4,7 +4,7 @@ import {logger} from '../logger';
 import {guard, pipe, UnaryFunction} from '../utils/pipe';
 import {convertToBoolean, convertToInteger, convertToString} from '../conversion/convert';
 import {extractFromRoute} from './route-extractor';
-import {extractFromBody} from './body-extractor';
+import {extractFromQuery} from './query-extractor';
 import {extractFromHeader} from './header-extractor';
 
 export interface Extractor<T> {
@@ -52,7 +52,7 @@ export function createParamsExtractionMethod(parametersTypes: string[], paramete
             extractor = extractFromRoute(decorated.name);
             break;
         case 'query':
-            extractor = extractFromBody(decorated.name);
+            extractor = extractFromQuery(decorated.name);
             break;
         case 'header':
             extractor = extractFromHeader(decorated.name);
