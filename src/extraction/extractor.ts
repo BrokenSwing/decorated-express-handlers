@@ -1,5 +1,5 @@
 import {Request} from 'express';
-import {ParameterInfo} from '../metadata/parameter-info';
+import {ParameterInfo} from '../metadata';
 import {logger} from '../logger';
 import {guard, pipe, UnaryFunction} from '../utils/pipe';
 import {convertToBoolean, convertToInteger, convertToString} from '../conversion/convert';
@@ -11,6 +11,12 @@ export interface Extractor<T> {
     (req: Request): T | undefined;
 }
 
+/**
+ * Returns values extractors for the given parameters.
+ *
+ * @param parametersTypes The types of the parameters
+ * @param parametersInfo The parameters information
+ */
 export function createParamsExtractionMethod(parametersTypes: string[], parametersInfo: ParameterInfo[]): Extractor<unknown[] | undefined> {
     /* Check if all method parameters are decorated */
     if (parametersTypes.length !== parametersInfo.length) {
