@@ -1,5 +1,8 @@
 import 'reflect-metadata';
-import {HandlerInfo, HttpVerb, PROPERTY_INFO_METADATA} from '../../metadata/handler-info';
+import {
+    addHandlerInfoFor,
+    HttpVerb,
+} from '../../metadata';
 
 export interface HandlerDecorator {
     (route: string): Function;
@@ -7,16 +10,11 @@ export interface HandlerDecorator {
 
 function createDecoratorForVerb(verb: HttpVerb): HandlerDecorator {
     return function(route: string): Function {
-        return function (
-            target: Record<string, unknown>,
-            propertyKey: string
-        ): void {
-            const handlerInfo: HandlerInfo[] = Reflect.getOwnMetadata(PROPERTY_INFO_METADATA, target, propertyKey) || [];
-            handlerInfo.push({
+        return function (target: Record<string, unknown>, propertyKey: string): void {
+            addHandlerInfoFor(target, propertyKey, {
                 method: verb,
                 route,
             });
-            Reflect.defineMetadata(PROPERTY_INFO_METADATA, handlerInfo, target, propertyKey);
         };
     };
 }

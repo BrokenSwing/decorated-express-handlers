@@ -1,10 +1,7 @@
-import 'reflect-metadata';
-import {RouteParam} from './route-parameter';
-import {QueryParam} from './body-parameter';
-import {HeaderParam} from './header-parameter';
-import {PARAM_INFO_METADATA, ParameterInfo} from '../../metadata/parameter-info';
+import {getParameterInfoOf, ParameterInfo} from '../../metadata';
 
 import * as chai from 'chai';
+import {HeaderParam, QueryParam, RouteParam} from './parameters';
 
 const expect = chai.expect;
 
@@ -26,7 +23,7 @@ describe('Parameters decorators', () => {
             const decorator = RouteParam('paramName');
             decorator(target, 'a', 1);
 
-            const decorated: ParameterInfo[] = Reflect.getOwnMetadata(PARAM_INFO_METADATA, target, 'a');
+            const decorated: ParameterInfo[] = getParameterInfoOf(target, 'a');
             expect(decorated).to.have.lengthOf(1);
             expect(decorated[0]).to.eql({
                 name: 'paramName',
@@ -46,7 +43,7 @@ describe('Parameters decorators', () => {
             const decorator = QueryParam('paramName');
             decorator(target, 'a', 1);
 
-            const decorated: ParameterInfo[] = Reflect.getOwnMetadata(PARAM_INFO_METADATA, target, 'a');
+            const decorated: ParameterInfo[] = getParameterInfoOf(target, 'a');
             expect(decorated).to.have.lengthOf(1);
             expect(decorated[0]).to.eql({
                 name: 'paramName',
@@ -66,7 +63,7 @@ describe('Parameters decorators', () => {
             const decorator = HeaderParam('paramName');
             decorator(target, 'a', 1);
 
-            const decorated: ParameterInfo[] = Reflect.getOwnMetadata(PARAM_INFO_METADATA, target, 'a');
+            const decorated: ParameterInfo[] = getParameterInfoOf(target, 'a');
             expect(decorated).to.have.lengthOf(1);
             expect(decorated[0]).to.eql({
                 name: 'paramName',

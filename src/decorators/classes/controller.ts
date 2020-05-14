@@ -1,15 +1,15 @@
 import 'reflect-metadata';
-import {getHandlerInfoOf, HttpVerb, isHandler} from '../../metadata/handler-info';
 import {NextFunction, Request, Response, Router} from 'express';
 import {logger} from '../../logger';
 import {createParamsExtractionMethod} from '../../extraction';
-import {getParameterInfoOf} from '../../metadata/parameter-info';
-import {getParametersTypesOf} from '../../metadata';
 import {
-    ControllerInfo,
-    getControllerInfoOf,
-    setControllerInfo
-} from '../../metadata/controller-info';
+    getParameterInfoOf,
+    getHandlerInfoOf,
+    HttpVerb,
+    isHandler,
+    addControllerInfoFor,
+    getParametersTypesOf
+} from '../../metadata';
 
 /**
  * Defines the decorated class as a controller. Every methods decorated with one of handlers
@@ -43,15 +43,12 @@ export function Controller(basePath: string): Function {
         /* Create a wrapper for given type. In futur it will be populated with injected dependencies */
         const WrapperType = class extends constructor {
             router: Router = router;
-            s = 'My string'
         };
 
-        const controllerInfo: ControllerInfo[] = getControllerInfoOf(WrapperType);
-        controllerInfo.push({
+        addControllerInfoFor(WrapperType, {
             path: basePath,
             router,
         });
-        setControllerInfo(WrapperType, controllerInfo);
 
         /* Create an instance of wrapped type to make calls on */
         const instance = new WrapperType();

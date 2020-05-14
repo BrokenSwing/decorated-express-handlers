@@ -1,4 +1,7 @@
 import 'reflect-metadata';
+export * from './controller-info';
+export * from './handler-info';
+export * from './parameter-info';
 
 /**
  * Retrieve parameters type of the method with the given name of the given prototype.

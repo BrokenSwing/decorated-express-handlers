@@ -1,6 +1,4 @@
-export {QueryParam} from './parameters/body-parameter';
-export {RouteParam} from './parameters/route-parameter';
-export {HeaderParam} from './parameters/header-parameter';
+export {QueryParam, RouteParam, HeaderParam} from './parameters/parameters';
 export {
     Get,
     Post,
