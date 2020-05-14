@@ -53,7 +53,7 @@ The first step is to create a controller. A controller is class decorated with t
 decorator.
 
 ```ts
-import {Controller} from 'annotated-express-handlers';
+import {Controller} from 'decorated-express-handlers';
 
 @Controller('/hello')
 class HelloController {
@@ -71,7 +71,7 @@ of specialized handler decorators (`@Get`, `@Post`, etc ...).
 
 Let's create the handler :
 ```ts
-import {Controller, Get} from 'annotated-express-handlers';
+import {Controller, Get} from 'decorated-express-handlers';
 
 @Controller('/hello')
 class HelloController {
@@ -90,7 +90,7 @@ Now we have defined a request handler, we can simply run the application. You ca
 use the `bootstrap` function and pass the controller as an argument to start the application.
 
 ```ts
-import {Controller, Get, bootstrap} from 'annotated-express-handlers';
+import {Controller, Get, bootstrap} from 'decorated-express-handlers';
 
 @Controller('/hello')
 class HelloController {
@@ -116,7 +116,7 @@ We now want to display `Hello, George!` if a GET request is made on `/hello/Geor
 to any other name. Let's add a parameter that matches the name.
 
 ```ts
-import {Controller, Get, bootstrap, RouteParam} from 'annotated-express-handlers';
+import {Controller, Get, bootstrap, RouteParam} from 'decorated-express-handlers';
 
 @Controller('/hello')
 class HelloController {
@@ -154,7 +154,7 @@ Hello, George!
 
 Let's do this :
 ```ts
-import {Controller, Get, bootstrap, RouteParam, QueryParam} from 'annotated-express-handlers';
+import {Controller, Get, bootstrap, RouteParam, QueryParam} from 'decorated-express-handlers';
 
 @Controller('/hello')
 class HelloController {
