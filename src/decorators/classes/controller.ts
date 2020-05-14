@@ -5,6 +5,11 @@ import {logger} from '../../logger';
 import {createParamsExtractionMethod} from '../../extraction';
 import {getParameterInfoOf} from '../../metadata/parameter-info';
 import {getParametersTypesOf} from '../../metadata';
+import {
+    ControllerInfo,
+    getControllerInfoOf,
+    setControllerInfo
+} from '../../metadata/controller-info';
 
 /**
  * Defines the decorated class as a controller. Every methods decorated with one of handlers
@@ -12,7 +17,7 @@ import {getParametersTypesOf} from '../../metadata';
  *
  * Example:
  * <pre>
- *  @Controller()
+ *  @Controller('/users')
  *  public class UserController {
  *
  *      @Get('/')
@@ -23,7 +28,7 @@ import {getParametersTypesOf} from '../../metadata';
  *  }
  * </pre>
  */
-export function Controller(): Function {
+export function Controller(basePath: string): Function {
     return function<T extends {new(...args: any[]): {}}>(constructor: T): T {
         // In futur, used parameters types to find dependencies
         /*
@@ -41,11 +46,18 @@ export function Controller(): Function {
             s = 'My string'
         };
 
+        const controllerInfo: ControllerInfo[] = getControllerInfoOf(WrapperType);
+        controllerInfo.push({
+            path: basePath,
+            router,
+        });
+        setControllerInfo(WrapperType, controllerInfo);
+
         /* Create an instance of wrapped type to make calls on */
         const instance = new WrapperType();
 
         /* Search for route handlers in the given type then attach them to previously created router */
-        Object.keys(constructor.prototype)
+        Object.getOwnPropertyNames(constructor.prototype)
             .filter((property) => isHandler(constructor.prototype, property))
             .forEach((property) => {
 

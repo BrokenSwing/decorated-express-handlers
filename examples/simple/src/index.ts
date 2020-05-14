@@ -1,10 +1,8 @@
-import * as Express from 'express';
 import {Controller, Get, RouteParam} from '../../../src/lib';
+import {bootstrap} from "../../../src/bootstrap/bootstrap";
 
-@Controller()
+@Controller("/users")
 class UserController {
-
-    public router!: Express.Router;
 
     @Get('/:id')
     getUserById(@RouteParam('id') id: number): string {
@@ -13,8 +11,9 @@ class UserController {
 
 }
 
-const app = Express();
-const userController = new UserController();
-app.use('/users', userController.router);
-app.listen(8000, () => console.log('Listening on http://localhost:8000/'));
+bootstrap(UserController).then((app) => {
+    app.listen(8000, () => console.log('Listening on http://localhost:8000/'));
+}).catch(() => {
+    console.error("Unable to start server.");
+});
 
