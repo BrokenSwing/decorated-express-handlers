@@ -1,4 +1,4 @@
-import {extractFromQuery, extractFromHeader, extractFromRoute} from './index';
+import {extractFromQuery, extractFromHeader, extractFromRoute, extractFromBody} from './index';
 import {Request} from 'express';
 
 import * as chai from 'chai';
@@ -59,6 +59,33 @@ describe('Data extraction from request', () => {
 
             const other = extractFromHeader('other')(req);
             expect(other).to.be.undefined;
+        });
+
+    });
+
+    describe('Body extractor', () => {
+
+        const reqMock = mock<Request>();
+        when(reqMock.body).thenReturn({
+            name: 'My name'
+        });
+
+        const reqMock2 = mock<Request>();
+        when(reqMock2.body).thenReturn(undefined);
+
+        it('should extract value from request body', () => {
+            const req = instance(reqMock);
+
+            const name = extractFromBody('name')(req);
+            expect(name).to.eq('My name');
+
+            const age = extractFromBody('age')(req);
+            expect(age).to.be.undefined;
+        });
+
+        it('should return undefined when request body is undefined', () => {
+            const name = extractFromBody('anything')(instance(reqMock2));
+            expect(name).to.be.undefined;
         });
 
     });

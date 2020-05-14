@@ -5,7 +5,7 @@ import {addParameterInfoFor} from '../../metadata';
  *
  * @param source The parameter source to specify in generated parameter info
  */
-function createParamDecoratorFor(source: 'query' | 'header' | 'route'): Function {
+function createParamDecoratorFor(source: 'query' | 'header' | 'route' | 'body'): Function {
     return function(name: string): ParameterDecorator {
         return function (target: Record<string, unknown>, propertyKey: string | symbol, parameterIndex: number): void {
             addParameterInfoFor(target, propertyKey, {
@@ -19,7 +19,7 @@ function createParamDecoratorFor(source: 'query' | 'header' | 'route'): Function
 
 /**
  * Links the decorated parameter to a query parameter.<br>
- * A query parameter is either in the URL for GET request, or in request body for POST request.<br>
+ * A query parameter is in the URL for GET request, after question mark.<br>
  * This decorator is meaningful only when used on a parameter of a class method that is decorated with
  * an handler decorator (@Get, @Post, @Put, etc ...).<br>
  *
@@ -29,7 +29,7 @@ function createParamDecoratorFor(source: 'query' | 'header' | 'route'): Function
  *     class UserController {
  *
  *          @Get('/')
- *          getUserById(@QueryParam('startsWith') nameBeginning): string {
+ *          getUserById(@QueryParam('startsWith') nameBeginning: string): string {
  *              return ['George', 'John', 'Jack'].filter(n => n.startsWith(nameBeginning));
  *          }
  *
@@ -54,7 +54,7 @@ export const QueryParam = createParamDecoratorFor('query');
  *     class UserController {
  *
  *          @Get('/')
- *          getUsers(@HeaderParam('Content-Type') contentType): string {
+ *          getUsers(@HeaderParam('Content-Type') contentType: string): string {
  *              return `Asked for users list but displayed with format ${contentType}`;
  *          }
  *
@@ -77,7 +77,7 @@ export const HeaderParam = createParamDecoratorFor('header');
  *     class UserController {
  *
  *          @Get('/:id')
- *          getUserById(@QueryParam('id') userId): string {
+ *          getUserById(@QueryParam('id') userId: number): string {
  *              return `Asked for user with id ${userId}`;
  *          }
  *
@@ -89,3 +89,30 @@ export const HeaderParam = createParamDecoratorFor('header');
  * @param name The name of the router parameter to link to
  */
 export const RouteParam = createParamDecoratorFor('route');
+
+/**
+ * Links the decorated parameter to a body parameter.<br>
+ * A body parameter is either in the URL for GET request, or in request body for POST request.<br>
+ * This decorator is meaningful only when used on a parameter of a class method that is decorated with
+ * an handler decorator (@Get, @Post, @Put, etc ...).<br>
+ *
+ * Example:
+ * <pre>
+ *     @Controller('/users')
+ *     class UserController {
+ *
+ *          @Get('/')
+ *          getUserById(@BodyParam('username') username: string, @BodyParam('password') password: string): string {
+ *              // Create user
+ *              return `User created: ${username}/${password}`;
+ *          }
+ *
+ *     }
+ * </pre>
+ *
+ * A POST request to <code>/users//code> with body <em>username=George&password=pass</em> will return
+ * <em>User created: George/pass</em>.
+ *
+ * @param name The name of the body parameter to link to
+ */
+export const BodyParam = createParamDecoratorFor('body');

@@ -1,7 +1,7 @@
 import {getParameterInfoOf, ParameterInfo} from '../../metadata';
 
 import * as chai from 'chai';
-import {HeaderParam, QueryParam, RouteParam} from './parameters';
+import {BodyParam, HeaderParam, QueryParam, RouteParam} from './parameters';
 
 const expect = chai.expect;
 
@@ -69,6 +69,25 @@ describe('Parameters decorators', () => {
                 name: 'paramName',
                 source: 'header',
                 index: 1
+            } as ParameterInfo);
+        });
+
+    });
+
+    describe('Body parameter', () => {
+
+        it('should store metadata', () => {
+            const target = new TestSubject();
+
+            const decorator = BodyParam('aName');
+            decorator(target, 'a', 18);
+
+            const decorated: ParameterInfo[] = getParameterInfoOf(target, 'a');
+            expect(decorated).to.have.lengthOf(1);
+            expect(decorated[0]).to.eql({
+                name: 'aName',
+                source: 'body',
+                index: 18
             } as ParameterInfo);
         });
 
