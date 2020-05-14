@@ -21,7 +21,7 @@ import {
  *  public class UserController {
  *
  *      @Get('/')
- *      getAllUser() {
+ *      getAllUsers() {
  *          return ['Foo', 'Bar', 'Foobar'];
  *      }
  *
