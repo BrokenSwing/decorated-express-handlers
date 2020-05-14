@@ -1,11 +1,20 @@
-import {getControllerInfoOf, isController} from '../metadata/controller-info';
+import {getControllerInfoOf, isController} from '../metadata';
 import {logger} from '../logger';
 import * as Express from 'express';
 
+/**
+ * Represents a class type.
+ */
 interface Type<T> extends Function {
      new (... args: any[]): T;
 }
 
+/**
+ * Bootstraps an express application with the given controllers.
+ * The given controllers will be mounted on the application.
+ *
+ * @param types A list a classes decorated as controllers
+ */
 export function bootstrap(... types: Type<any>[]): Promise<Express.Express> {
     for (let i = 0; i < types.length; i++) {
         const t = types[i];
