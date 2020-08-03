@@ -9,6 +9,10 @@ import {Extractor} from './extractor';
  */
 export function extractFromQuery(paramName: string): Extractor<string | undefined> {
     return (req: Request): string | undefined => {
-        return req.query[paramName];
+        const value = req.query[paramName];
+        if (typeof value === 'string') {
+            return value;
+        }
+        return undefined;
     };
 }
