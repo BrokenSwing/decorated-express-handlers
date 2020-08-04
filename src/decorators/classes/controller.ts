@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import {NextFunction, Request, Response, Router} from 'express';
 import {logger} from '../../logger';
-import {createParamsExtractionMethod} from '../../extraction';
 import {
     getParameterInfoOf,
     getHandlerInfoOf,
@@ -10,6 +9,7 @@ import {
     addControllerInfoFor,
     getParametersTypesOf
 } from '../../metadata';
+import { hasParser, getParserFor } from '../../registries/types-registry';
 
 /**
  * Defines the decorated class as a controller. Every methods decorated with one of handlers
@@ -63,11 +63,36 @@ export function Controller(basePath: string): Function {
                 const typesNames     = getParametersTypesOf(constructor.prototype, property);
                 const parametersInfo = getParameterInfoOf(constructor.prototype, property);
 
+                const extractors = parametersInfo
+                    .map((param) => {
+                        const typename = typesNames[param.index];
+                        if (!hasParser(typename)) {
+                            throw new Error(`Type ${typename} does not have a parser associated to it.`);
+                        }
+                        const parser = getParserFor(typename);
+                        const extractor = getValue(param.name, param.source);
+
+                        return (req: Request) => parser.parse(extractor(req), parser.defaultConfig);
+                    });
+
                 /* Create the method to extract all parameters from the request object */
-                const parametersExtractor = createParamsExtractionMethod(typesNames, parametersInfo);
+                const parametersExtractor = (req: Request) => {
+                    const values: any[] = [];
+                    for (let i = 0; i < extractors.length; i++) {
+                        const currentExtractor = extractors[i];
+                        const parserResult = currentExtractor(req);
+                        if (parserResult.success) {
+                            values.push(parserResult.value);
+                        } else {
+                            return null;
+                        }
+                    }
+                    return values;
+                };
+
                 const handleFunction = function(req: Request, res: Response, next: NextFunction): void {
-                    const paramsValues: unknown[] | undefined = parametersExtractor(req);
-                    if (paramsValues === undefined) {
+                    const paramsValues: unknown[] | null = parametersExtractor(req);
+                    if (paramsValues === null) {
                         next();
                     } else {
                         // TODO: Handle multiple return types
@@ -89,6 +114,47 @@ export function Controller(basePath: string): Function {
 
         return WrapperType;
     };
+}
+
+function getValue(id: string | null, source: 'query' | 'route' | 'header' | 'body'): (req: Request) => any {
+    switch (source) {
+    case 'query':
+        return getQueryValue(id);
+    case 'body':
+        return getBodyValue(id);
+    case 'header':
+        return getHeaderValue(id);
+    case 'route':
+        return getRouteValue(id);
+    }   
+}
+
+function getQueryValue(id: string | null): (req: Request) => any {
+    if (id === null) {
+        return (req: Request) => req.query;
+    }
+    return (req: Request) => req.query[id];
+}
+
+function getRouteValue(id: string | null): (req: Request) => any {
+    if (id === null)  {
+        return (req: Request) => req.params;
+    }
+    return (req: Request) => req.params[id];
+}
+
+function getHeaderValue(id: string | null): (req: Request) => any {
+    if (id === null) {
+        throw new Error('You should provide an identifier for a header value.');
+    }
+    return (req: Request) => req.header(id);
+}
+
+function getBodyValue(id: string | null): (req: Request) => any {
+    if (id === null) {
+        return (req: Request) => req.body || {};
+    }
+    return (req: Request) => (req.body || {})[id];
 }
 
 /**

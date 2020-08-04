@@ -18,6 +18,12 @@ import {
     getParameterInfoOf,
     setParameterInfoFor,
     addParameterInfoFor,
+
+    FORM_FIELD_INFO_METADATA,
+    FormFieldInfo,
+    getFormFieldsInfo,
+    setFormFieldsInfoFor,
+    addFormFieldInfo
 } from './index';
 
 const expect = chai.expect;
@@ -151,6 +157,49 @@ describe('Metadata', () => {
             addParameterInfoFor(TheTarget, 'theMethod', parameterInfo);
             expect(getParameterInfoOf(TheTarget, 'theMethod')).to.have.length(1);
             expect(getParameterInfoOf(TheTarget, 'theMethod')[0]).to.be.eql(parameterInfo);
+        });
+
+    });
+
+    describe('Form field metadata', () => {
+
+        beforeEach(() => {
+            Reflect.deleteMetadata(FORM_FIELD_INFO_METADATA, TheTarget);
+        });
+
+        after(() => {
+            Reflect.deleteMetadata(FORM_FIELD_INFO_METADATA, TheTarget);
+        });
+
+        it('should return an empty array when no metadata were defined', () => {
+            expect(getFormFieldsInfo(TheTarget)).to.be.empty;
+        });
+
+        it('should set and return the given metadata', () => {
+            const fieldsInfo: FormFieldInfo[] = [
+                {
+                    id: 'id',
+                    propertyName: 'name',
+                    type: 'MyType'
+                }, {
+                    id: 'other-id',
+                    propertyName: 'other-name',
+                    type: 'OtherType'
+                }
+            ];
+            setFormFieldsInfoFor(TheTarget, fieldsInfo);
+            expect(getFormFieldsInfo(TheTarget)).to.eql(fieldsInfo);
+        });
+
+        it('should add the given metadata', () => {
+            const fieldInfo: FormFieldInfo = {
+                id: 'an-id',
+                propertyName: 'a-name',
+                type: 'AType'
+            };
+            addFormFieldInfo(TheTarget, fieldInfo);
+            expect(getFormFieldsInfo(TheTarget)).to.have.length(1);
+            expect(getFormFieldsInfo(TheTarget)[0]).to.be.eql(fieldInfo);
         });
 
     });

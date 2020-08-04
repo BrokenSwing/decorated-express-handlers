@@ -7,3 +7,4 @@ export {
     Put
 } from './methods/http-verb';
 export {Controller} from './classes/controller';
+export {Form, Field} from './classes/form-data';

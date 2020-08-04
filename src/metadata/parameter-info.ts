@@ -11,7 +11,7 @@ export const PARAM_INFO_METADATA = Symbol('requestParam');
  *  - index: where to inject the found value
  */
 export interface ParameterInfo {
-    name: string;
+    name: string | null;
     source: 'query' | 'route' | 'header' | 'body';
     index: number;
 }

@@ -5,11 +5,11 @@ import {addParameterInfoFor} from '../../metadata';
  *
  * @param source The parameter source to specify in generated parameter info
  */
-function createParamDecoratorFor(source: 'query' | 'header' | 'route' | 'body'): Function {
-    return function(name: string): ParameterDecorator {
+function createParamDecoratorFor(source: 'query' | 'header' | 'route' | 'body'): (id?: string) => ParameterDecorator {
+    return function(name?: string): ParameterDecorator {
         return function (target: Record<string, unknown>, propertyKey: string | symbol, parameterIndex: number): void {
             addParameterInfoFor(target, propertyKey, {
-                name,
+                name: name ? name : null,
                 source: source,
                 index: parameterIndex,
             });
