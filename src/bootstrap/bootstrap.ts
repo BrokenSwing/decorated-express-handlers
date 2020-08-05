@@ -1,6 +1,7 @@
 import {getControllerInfoOf, isController} from '../metadata';
 import {logger} from '../logger';
 import * as Express from 'express';
+import * as bodyParser from 'body-parser';
 
 /**
  * Represents a class type.
@@ -26,6 +27,8 @@ export function bootstrap(... types: Type<any>[]): Promise<Express.Express> {
     }
 
     const app = Express();
+    app.use(bodyParser.json());
+
     types.flatMap((t) => getControllerInfoOf(t))
         .forEach((info) => {
             app.use(info.path, info.router);
