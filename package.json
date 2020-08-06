@@ -1,25 +1,26 @@
 {
-  "name": "decorated-express-handlers",
+  "name": "exwide",
   "version": "1.0.0",
-  "description": "Decorators for express handlers",
+  "description": "Decorators for express applications",
   "main": "dist/lib.js",
   "types": "dist/lib.d.ts",
   "scripts": {
     "test": "mocha --reporter spec --require ts-node/register 'src/**/*.spec.ts'",
     "build": "tsc",
     "lint-fix": "eslint --fix src/**/*.ts",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "Florent HUGOUVIEUX",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BrokenSwing/decorated-express-handlers.git"
+    "url": "git+https://github.com/BrokenSwing/exwide.git"
   },
   "bugs": {
-    "url": "https://github.com/BrokenSwing/decorated-express-handlers/issues"
+    "url": "https://github.com/BrokenSwing/exwide/issues"
   },
-  "homepage": "https://github.com/BrokenSwing/decorated-express-handlers",
+  "homepage": "https://github.com/BrokenSwing/exwide",
   "license": "Apache 2.0",
   "devDependencies": {
     "@types/body-parser": "^1.19.0",

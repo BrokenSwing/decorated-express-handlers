@@ -1,8 +1,8 @@
-# Decorated express handlers
+# ExWiDe
 
-![Node.js CI](https://github.com/BrokenSwing/decorated-express-handlers/workflows/Node.js%20CI/badge.svg)
+![Node.js CI](https://github.com/BrokenSwing/exwide/workflows/Node.js%20CI/badge.svg)
 
-*Decorated express handlers* is a framework that aims to simplify projects built using express 
+*ExWiDe* is a framework that aims to simplify projects built using express 
 and TypeScript. It takes avantage of TypeScript decorators and typing system to guess the format
 you want the user input to be converted to and validates them to match your needs.
 
@@ -41,7 +41,7 @@ To use the framework you must configure your `tsconfig.json` with the three foll
 
 The first one allows to use `Array#flatMap` and the two other ones allow the usage of decorators.
 
-Some example projects can be found in [the example folder](https://github.com/BrokenSwing/decorated-express-handlers/tree/master/examples).
+Some example projects can be found in [the example folder](https://github.com/BrokenSwing/exwide/tree/master/examples).
 
 ## Getting started
 
@@ -53,7 +53,7 @@ The first step is to create a controller. A controller is class decorated with t
 decorator.
 
 ```ts
-import {Controller} from 'decorated-express-handlers';
+import {Controller} from 'exwide';
 
 @Controller('/hello')
 class HelloController {
@@ -71,7 +71,7 @@ of specialized handler decorators (`@Get`, `@Post`, etc ...).
 
 Let's create the handler :
 ```ts
-import {Controller, Get} from 'decorated-express-handlers';
+import {Controller, Get} from 'exwide';
 
 @Controller('/hello')
 class HelloController {
@@ -90,7 +90,7 @@ Now we have defined a request handler, we can simply run the application. You ca
 use the `bootstrap` function and pass the controller as an argument to start the application.
 
 ```ts
-import {Controller, Get, bootstrap} from 'decorated-express-handlers';
+import {Controller, Get, bootstrap} from 'exwide';
 
 @Controller('/hello')
 class HelloController {
@@ -116,7 +116,7 @@ We now want to display `Hello, George!` if a GET request is made on `/hello/Geor
 to any other name. Let's add a parameter that matches the name.
 
 ```ts
-import {Controller, Get, bootstrap, RouteParam} from 'decorated-express-handlers';
+import {Controller, Get, bootstrap, RouteParam} from 'exwide';
 
 @Controller('/hello')
 class HelloController {
@@ -154,7 +154,7 @@ Hello, George!
 
 Let's do this :
 ```ts
-import {Controller, Get, bootstrap, RouteParam, QueryParam} from 'decorated-express-handlers';
+import {Controller, Get, bootstrap, RouteParam, QueryParam} from 'exwide';
 
 @Controller('/hello')
 class HelloController {
