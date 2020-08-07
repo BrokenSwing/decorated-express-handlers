@@ -2,9 +2,11 @@
 
 ![Node.js CI](https://github.com/BrokenSwing/exwide/workflows/Node.js%20CI/badge.svg)
 
-*ExWiDe* is a framework that aims to simplify projects built using express 
-and TypeScript. It takes avantage of TypeScript decorators and typing system to guess the format
-you want the user input to be converted to and validates them to match your needs.
+![logo](./assets/exwide_full.png)
+
+*Exwide* is a framework that aims to simplify projects built using express 
+and TypeScript. It takes advantage of TypeScript decorators and typing system to guess the format
+you want the user input to be converted to and validates it to match your needs.
 
 It also allows to design your project in a Controller/Service way with dependency injection 
 (coming ASAP).
@@ -18,7 +20,7 @@ It also allows to design your project in a Controller/Service way with dependenc
     * [Create a controller](#create-a-controller)
     * [Declare a request handler in a controller](#declare-a-request-handler-in-a-controller)
     * [Bootstrap the framework to run the application](#bootstrap-the-framework-to-run-the-application)
-    * [Add a user provided parameter](#add-a-user-provided-parameter)
+    * [Add a user provided parameter](#add-an-user-provided-parameter)
 
 ## Setting up a project
 
@@ -103,14 +105,14 @@ class HelloController {
 }
 
 bootstrap(HelloController).then((app) => {
-    app.listen(8000, () => console.log('Visite http://localhost:8000/hello/'));
+    app.listen(8000, () => console.log('Visit http://localhost:8000/hello/'));
 }).catch(() => console.error('Unable to start the application'));
 ```
 
 You can now visit [http://localhost:8000/hello/](http://localhost:8000/hello/) and you'll see
 a page returning `Hello, world!`.
 
-### Add a user provided parameter
+### Add an user provided parameter
 
 We now want to display `Hello, George!` if a GET request is made on `/hello/George`, or
 to any other name. Let's add a parameter that matches the name.
@@ -134,13 +136,13 @@ class HelloController {
 }
 
 bootstrap(HelloController).then((app) => {
-    app.listen(8000, () => console.log('Visite http://localhost:8000/hello/George'));
+    app.listen(8000, () => console.log('Visit http://localhost:8000/hello/George'));
 }).catch(() => console.error('Unable to start the application'));
 ```
 
 Now you can visit [http://localhost:8000/hello/George](http://localhost:8000/hello/George) and
 the message `Hello, George!` will be displayed. The framework finds the `name` parameter in the
-route (the parsing is done by express of cours) then pass it to our method.
+route (the parsing is done by express of course) then pass it to our method.
 
 Now, we want to display `n` times the messages, the `n` value being passed by user. We want
 the URL `/hello/George/?times=5` to display :
@@ -181,7 +183,7 @@ class HelloController {
 }
 
 bootstrap(HelloController).then((app) => {
-    app.listen(8000, () => console.log('Visite http://localhost:8000/hello/George?times=5'));
+    app.listen(8000, () => console.log('Visit http://localhost:8000/hello/George?times=5'));
 }).catch(() => console.error('Unable to start the application'));
 ```
 
